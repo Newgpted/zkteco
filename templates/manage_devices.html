@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IT-门禁管理后台</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        height: 900px; /* 固定页面总高度 */
+        width: 90%; /* 或者其他具体的宽度值，如 1200px */
+        margin: 0 auto; /* 用于居中页面内容 */
+    }
+
+    .header {
+        background: #007bff;
+        color: #fff;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 10px; /* 固定页面总高度 */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+    }
+
+    .header .right {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .header .right a,
+    .header .right button {  /* 同时选中 a 和 button */
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #28a745; /* 绿色背景 */
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+        text-decoration: none; /* 去除链接默认下划线 */
+        margin-left: 0.5rem;  /* 添加按钮间距 */
+    }
+
+    .header .right a:hover,
+    .header .right button:hover {  /* 同时选中 a 和 button */
+        background-color: #218838; /* 绿色悬停颜色 */
+    }
+
+    .container {
+        display: flex;
+        flex-grow: 1;
+    }
+
+    .sidebar {
+        width: 220px;
+        background: #333;
+        color: #fff;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar button,
+    .sidebar a {
+        width: 100%;
+        background: #444;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.3s;
+        text-decoration: none;
+    }
+
+    .sidebar button:hover,
+    .sidebar a:hover {
+        background: #555;
+    }
+
+    .sidebar button.selected {
+        background: #555;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 2rem;
+        background: #fff;
+        margin-left: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        max-width: 400px;
+        margin-bottom: 0.5rem; /* 调整间距 */
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 0.3rem; /* 调整间隔 */
+        font-size: 0.85rem; /* 调整字体大小 */
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 0.3rem; /* 调整内边距 */
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 0.5rem; /* 调整间隔 */
+        font-size: 0.85rem; /* 调整字体大小 */
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem; /* 调整按钮内边距 */
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9rem; /* 调整字体大小 */
+        transition: background-color 0.3s;
+        display: inline-block;
+        margin: 0.2rem;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .list-group {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-content h2 {
+        margin-bottom: 1rem;
+        font-size: 1.2rem; /* 调整标题大小 */
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 20px; /* 调整关闭按钮大小 */
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .section-header .buttons {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .section-header .right {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .region-grid-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .region-grid .list-item {
+        flex: 1 1 calc(25% - 10px);
+        box-sizing: border-box;
+        padding: 1rem;
+        background-color: #e9ecef;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .region-grid .btn {
+        background-color: #6c757d;
+    }
+
+    .region-grid .btn:hover {
+        background-color: #5a6268;
+    }
+
+    .region-grid .btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .content {
+        display: none;
+    }
+
+    .content.show {
+        display: block;
+    }
+
+    .btn.add-region-btn {
+        background-color: #28a745;
+    }
+
+    .btn.add-region-btn:hover {
+        background-color: #218838;
+    }
+
+    .btn.add-tag-btn {
+        background-color: #28a745;
+    }
+
+    .btn.add-tag-btn:hover {
+        background-color: #218838;
+    }
+
+    #edit_tag_devices {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    #edit_tag_devices::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #edit_tag_devices::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 4px;
+    }
+
+    #edit_tag_devices::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
+
+    #deviceFilter {
+        margin-bottom: 10px;
+        padding: 5px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .tags {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .tag {
+        display: inline-block;
+        background-color: #17a2b8;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        margin-right: 5px;
+        font-size: 12px;
+    }
+
+    footer {
+        background-color: #f1f1f1;
+        padding: 1rem;
+        text-align: center;
+        margin-top: auto;
+        width: 100%;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    }
+   .disabled {
+    background-color: #ffcccc; /* 背景颜色淡红 */
+    color: red; /* 字体颜色红色 */
+}
+
+.disabled .btn {
+    background-color: #e60000;
+}
+
+.disabled .btn:hover {
+    background-color: #cc0000;
+}
+
+</style>
+
+</head>
+<body>
+    <div class="header">
+        <h1>IT门禁-后台管理</h1>
+
+        <div class="right">
+            <form action="{{ url_for('view_logs') }}" method="GET" style="display: inline;">
+                            <button type="submit" class="btn">查看日志</button>
+                            <a href="{{ url_for('index') }}">返回上一层</a>
+                            <a class="username-link" id="usernameLink">{{ current_user.nickname }}</a>
+                            <a href="{{ url_for('logout') }}">退出登录</a>
+                        </form>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <button class="selected" onclick="filterDevicesByRegion('')">全部区域</button>
+            {% for region in regions %}
+                <button onclick="filterDevicesByRegion('{{ region.id }}')" {% if region.id == selected_region_id %}class="selected"{% endif %}>{{ region.name }}</button>
+            {% endfor %}
+            <button onclick="showSection('users')">用户列表</button>
+            <button onclick="showSection('regions')">区域管理</button>
+            <button onclick="showSection('tags')">标签管理</button>
+        </div>
+
+        <form style="display: none;" action="{{ url_for('manage_devices') }}" method="GET" id="filterForm">
+            <input type="hidden" name="region" id="selectedRegion">
+            <input type="hidden" name="tag" id="selectedTag">
+        </form>
+
+        <div class="main-content">
+            <div class="content" id="devices">
+                <div class="section-header">
+                    <div class="right">
+                        <h2>门禁列表</h2>
+                        <span>共计：{{ device_count }} 设备</span>  <!-- 显示设备数量 -->
+                        <div class="messages">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    <ul>
+                                        {% for category, message in messages %}
+                                            <li class="{{ category }}">{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn" onclick="openModal('addDeviceModal')">增加门禁</button>
+
+                    </div>
+                </div>
+                <ul class="list-group">
+                    {% for device in devices %}
+                        <li class="list-item">
+                            <div style="flex: 1;">
+                                <span>{{ device.alias }} ({{ device.ip_address }})</span>
+                                <div class="tags">
+                                    {% for tag in device.tags %}
+                                        <span class="tag">{{ tag.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <form action="{{ url_for('test_device', device_id=device.id) }}" method="post" style="display:inline;">
+                                    {{ form.hidden_tag() }} <!-- 添加这行 -->
+                                   <input type="hidden" name="region_id" value="{{ selected_region_id }}">
+                                    <button class="btn test-connection-btn" type="submit">测试连接</button>
+                                </form>
+                                <button class="btn" onclick="openEditModal({{ device.id }}, '{{ device.alias }}', '{{ device.ip_address }}', {{ device.region_id }}, '{{ device.tags | map(attribute='id') | list | tojson | safe }}', '{{ device.group if device.group else '' }}', '{{ device.comm_key if device.comm_key else '' }}', {{ device.port if device.port else 4370 }})">编辑</button>
+
+                                <form action="{{ url_for('delete_device', device_id=device.id) }}" method="POST" style="display:inline;">
+                                    {{ form.hidden_tag() }} <!-- 添加这行 -->
+                                    <input type="hidden" name="region_id" value="{{ selected_region_id }}">
+                                    <button type="submit" class="btn">删除</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="content" id="users">
+                <div class="section-header">
+                    <h2>用户列表</h2>
+                    <span>共计：{{ user_count }} 用户</span>
+                    <button class="btn" onclick="openModal('addUserModal')">增加用户</button>
+                </div>
+                <ul class="list-group">
+                    {% for user in users %}
+    <li class="list-item {% if user.is_disabled %}disabled{% endif %}">
+        <div style="flex: 1;">
+            <span>{{ user.username }} {{ user.nickname }} ({{ user.role }})</span>
+            <div class="tags">
+                {% if user.allowed_tags %}
+                    {% for tag_id in user.allowed_tags.split(',') %}
+                        {% set tag = tags | selectattr("id", "equalto", tag_id | int) | first %}
+                        {% if tag %}
+                            <span class="tag">{{ tag.name }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn"
+                    onclick="openEditUserModal({{ user.id }}, '{{ user.username }}', '{{ user.nickname }}', '{{ user.role }}', '{{ user.allowed_tags }}', '{{ user.allowed_groups }}')">
+                编辑
+            </button>
+            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('确定要删除这个用户吗？');">
+    {{ form.hidden_tag() }} <!-- 添加这行确保 CSRF 令牌 -->
+    <input type="hidden" name="section" value="users">
+    <button type="submit" class="btn">删除</button>
+</form>
+            <button class="btn"
+                    onclick="openModal('changePasswordModal', {{ user.id }}, '{{ user.username }}')">
+                修改密码
+            </button>
+            <form action="{{ url_for('toggle_user_status', user_id=user.id) }}" method="POST"
+                  style="display:inline;">
+                {{ form.hidden_tag() }} <!-- 添加这行确保 CSRF 令牌 -->
+                <input type="hidden" name="section" value="users">
+                <button type="submit" class="btn">{{ '启用' if user.is_disabled else '禁用' }}
+                </button>
+            </form>
+
+        </div>
+    </li>
+{% endfor %}
+
+                </ul>
+            </div>
+
+            <div class="content" id="regions">
+                <div class="section-header">
+                    <h2>区域管理</h2>
+                    <button class="btn add-region-btn" onclick="openModal('addRegionModal')">增加区域</button>
+                </div>
+                <div class="region-grid-container">
+                    <div class="region-grid">
+                        <ul class="list-group">
+                            {% for region in regions %}
+                                <li class="list-item">
+                                    <span>{{ region.name }}</span>
+                                    <div class="btn-group">
+                                        <button class="btn" onclick="openEditRegionModal({{ region.id }}, '{{ region.name }}')">编辑</button>
+                                        <form action="{{ url_for('delete_region', region_id=region.id) }}" method="POST" style="display:inline;">
+                                            {{ form.hidden_tag() }} <!-- 添加这行 -->
+                                            <input type="hidden" name="section" value="regions">
+                                            <button type="submit" class="btn">删除</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content" id="tags">
+                <div class="section-header">
+                    <h2>标签管理</h2>
+                    <button class="btn add-tag-btn" onclick="openModal('addTagModal')">增加标签</button>
+                </div>
+                <div class="region-grid-container">
+                    <div class="region-grid">
+                        <ul class="list-group">
+                            {% for tag in tags %}
+                                <li class="list-item">
+                                    <span>{{ tag.name }}</span>
+                                    <span>关联设备: {{ tag_device_counts[tag.id] }} 台</span> <!-- 显示标签下的设备数量 -->
+                                    <div class="btn-group">
+                                        <button class="btn" onclick="filterTagDevices('{{ tag.id }}', '{{ tag.name }}')">查看门禁</button>
+                                        <button class="btn" onclick="openEditTagModal({{ tag.id }}, '{{ tag.name }}', {{ tag.devices | map(attribute='id') | list | tojson }})">编辑</button>
+                                        <form action="{{ url_for('delete_tag', tag_id=tag.id) }}" method="POST" style="display:inline;">
+                                            {{ form.hidden_tag() }} <!-- 添加这行 -->
+                                            <input type="hidden" name="section" value="tags">
+                                            <button type="submit" class="btn">删除</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content" id="tag-devices">
+    <div class="section-header">
+        <h2 id="selectedTagName">标签相关门禁</h2>
+        <span id="selectedTagDeviceCount">共计：0 台设备</span> <!-- 设备数量将在JS中动态更新 -->
+    </div>
+    <ul class="list-group" id="tagDeviceList">
+        <!-- 由JavaScript动态生成相关的门禁设备列表 -->
+    </ul>
+</div>
+        </div>
+    </div>
+
+
+    <!-- 增加门禁模态窗口 -->
+<div id="addDeviceModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addDeviceModal')">&times;</span>
+        <h2>增加门禁</h2>
+        <form action="{{ url_for('add_device') }}" method="POST">
+            {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+            <div class="form-group">
+                <label for="device_alias">别名:</label>
+                <input type="text" id="device_alias" name="alias" required>
+            </div>
+            <div class="form-group">
+                <label for="device_ip_address">IP地址:</label>
+                <input type="text" id="device_ip_address" name="ip_address" required>
+                <label for="device_port">端口:</label>
+                <input type="number" id="device_port" name="port" value="4370">
+            </div>
+            <div class="form-group">
+                <label for="device_comm_key">通讯密码:</label>
+                <input type="number" id="device_comm_key" name="comm_key" placeholder="通讯密码选填"> <!-- 允许为空 -->
+            </div>
+            <div class="form-group">
+                <label for="device_region">区域:</label>
+                <select id="device_region" name="region_id" required>
+                    {% for region in regions %}
+                        <option value="{{ region.id }}">{{ region.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="device_tags">标签:</label>
+                {% for tag in tags %}
+                    <div>
+                        <input type="checkbox" id="device_tag_{{ tag.id }}" name="tags" value="{{ tag.id }}">
+                        <label for="device_tag_{{ tag.id }}">{{ tag.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn">增加门禁</button>
+        </form>
+    </div>
+</div>
+
+    <!-- 编辑门禁模态窗口 -->
+<div id="editDeviceModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editDeviceModal')">&times;</span>
+        <h2>编辑门禁</h2>
+        <form action="{{ url_for('edit_device') }}" method="POST">
+            {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+            <input type="hidden" id="edit_device_id" name="device_id" required>
+            <div class="form-group">
+                <label for="edit_alias">别名:</label>
+                <input type="text" id="edit_alias" name="alias" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_ip_address">IP地址:</label>
+                <input type="text" id="edit_ip_address" name="ip_address" required>
+                <label for="edit_port">端口:</label>
+                <input type="number" id="edit_port" name="port" value="4370">  <!-- 确保传递端口值 -->
+            </div>
+            <div class="form-group">
+                <label for="edit_comm_key">通讯密码:</label>
+                <input type="text" id="edit_comm_key" name="comm_key" placeholder="选填"> <!-- 文本输入框，根据值填充 -->
+            </div>
+            <div class="form-group">
+                <label for="edit_region_id">区域:</label>
+                <select id="edit_region_id" name="region_id" required>
+                    {% for region in regions %}
+                        <option value="{{ region.id }}">{{ region.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edit_tags">标签:</label>
+                {% for tag in tags %}
+                    <div>
+                        <input type="checkbox" id="edit_tag_{{ tag.id }}" name="tags" value="{{ tag.id }}">
+                        <label for="edit_tag_{{ tag.id }}">{{ tag.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="edit_group">组:</label>
+                <input type="text" id="edit_group" name="group">
+            </div>
+            <button type="submit" class="btn">保存修改</button>
+        </form>
+    </div>
+</div>
+
+
+
+    <!-- 添加用户模态窗口 -->
+<div id="addUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+        <h2>添加用户</h2>
+        <form action="{{ url_for('add_user') }}" method="POST">
+            {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="nickname">姓名:</label>
+                <input type="text" id="nickname" name="nickname" required>
+            </div>
+            <div class="form-group">
+                <label for="role">权限:</label>
+                <select id="role" name="role" required>
+                    <option value="user">普通用户</option>
+                    <option value="admin">管理员</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tags">允许的标签:</label>
+                {% for tag in tags %}
+                    <div>
+                        <input type="checkbox" id="tag_{{ tag.id }}" name="tags" value="{{ tag.id }}">
+                        <label for="tag_{{ tag.id }}">{{ tag.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="allowed_groups">允许的分组:</label>
+                <input type="text" id="allowed_groups" name="allowed_groups">
+            </div>
+            <div class="form-group">
+                <label for="is_disabled">禁用:</label>
+                <input type="checkbox" id="is_disabled" name="is_disabled">
+            </div>
+            <button type="submit" class="btn">添加用户</button>
+        </form>
+    </div>
+</div>
+
+
+    <!-- 编辑用户模态窗口 -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editUserModal')">&times;</span>
+            <h2>编辑用户</h2>
+            <form action="{{ url_for('edit_user') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" name="section" value="users">
+                <input type="hidden" id="edit_user_id" name="user_id">
+                <div class="form-group">
+                    <label for="edit_username">用户名:</label>
+                    <input type="text" id="edit_username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_nickname">姓名:</label>
+                    <input type="text" id="edit_nickname" name="nickname" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_role">权限:</label>
+                    <select id="edit_role" name="role" required>
+                        <option value="user">普通用户</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_tags">允许的标签:</label>
+                    {% for tag in tags %}
+                        <div>
+                            <input type="checkbox" id="edit_tag_{{ tag.id }}" name="tags" value="{{ tag.id }}">
+                            <label for="edit_tag_{{ tag.id }}">{{ tag.name }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="edit_groups">允许的分组:</label>
+                    <input type="text" id="edit_groups" name="allowed_groups">
+                </div>
+                <button type="submit" class="btn">保存修改</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 修改密码模态窗口 -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            <h2>修改密码</h2>
+            <form id="changePasswordForm" action="{{ url_for('change_user_password') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" name="section" value="users">
+                <input type="hidden" id="change_user_id" name="user_id">
+                <div class="form-group">
+                    <label for="new_password">新密码:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <button type="submit" class="btn">修改密码</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 增加区域模态窗口 -->
+    <div id="addRegionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addRegionModal')">&times;</span>
+            <h2>增加区域</h2>
+            <form action="{{ url_for('add_region') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" name="section" value="regions">
+                <div class="form-group">
+                    <label for="region">区域名称:</label>
+                    <input type="text" id="region" name="region" required>
+                </div>
+                <button type="submit" class="btn">增加区域</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑区域模态窗口 -->
+    <div id="editRegionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editRegionModal')">&times;</span>
+            <h2>编辑区域</h2>
+            <form action="{{ url_for('edit_region') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" id="edit_region_id_hidden" name="region_id" required>
+                <input type="hidden" name="section" value="regions">
+                <div class="form-group">
+                    <label for="edit_region_name">区域名称:</label>
+                    <input type="text" id="edit_region_name" name="region_name" required>
+                </div>
+                <button type="submit" class="btn">保存修改</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 增加标签模态窗口 -->
+    <div id="addTagModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addTagModal')">&times;</span>
+            <h2>增加标签</h2>
+            <form id="addTagForm" action="{{ url_for('add_tag') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" name="section" value="tags">
+                <div class="form-group">
+                    <label for="new_tag">新标签:</label>
+                    <input type="text" id="new_tag" name="tag_name" required>
+                </div>
+                <button type="submit" class="btn">增加标签</button>
+            </form>
+        </div>
+    </div>
+
+        <!-- 编辑标签模态窗口 -->
+<div id="editTagModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editTagModal')">&times;</span>
+        <h2>编辑标签</h2>
+        <form id="editTagForm" action="{{ url_for('edit_tag') }}" method="POST">
+            {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+            <input type="hidden" name="section" value="tags">
+            <input type="hidden" id="edit_tag_id" name="tag_id" required>
+            <div class="form-group">
+                <label for="edit_tag_name">标签名称:</label>
+                <input type="text" id="edit_tag_name" name="tag_name" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_tag_devices">关联的门禁:</label>
+                <input type="text" id="deviceFilter" placeholder="输入关键词过滤设备">
+                <button type="button" onclick="toggleSelectAll('edit_tag_devices')">全选/取消全选</button>
+                <div id="edit_tag_devices">
+                    {% for device in all_devices %}
+                        <div data-device-name="{{ device.alias }}">
+                            <input type="checkbox" id="edit_device_{{ device.id }}_tag_{{ loop.index }}" name="devices" value="{{ device.id }}">
+                            <label for="edit_device_{{ device.id }}_tag_{{ loop.index }}">{{ device.alias }} ({{ device.ip_address }})</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn">保存修改</button>
+        </form>
+    </div>
+</div>
+
+
+    <!-- 增加门禁到标签的模态窗口 -->
+    <div id="addDevicesToTagModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addDevicesToTagModal')">&times;</span>
+            <h2>添加门禁到标签</h2>
+            <form id="addDevicesToTagForm" action="{{ url_for('add_devices_to_tag') }}" method="POST">
+                {{ form.hidden_tag() }} <!-- 添加 CSRF 令牌 -->
+                <input type="hidden" id="add_tag_id" name="tag_id" required>
+                <div class="form-group">
+                    <label for="add_tag_devices">选择门禁:</label>
+                    <select id="add_tag_devices" name="devices" multiple>
+                        {% for device in available_devices %}
+                            <option value="{{ device.id }}">{{ device.alias }} ({{ device.ip_address }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn">添加门禁</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        Copyright &copy; By 2024 IT-门禁管理系统. All rights reserved.
+    </footer>
+
+    <script>
+        function filterDevicesByRegion(regionId) {
+            document.getElementById('selectedRegion').value = regionId; // 更新区域参数
+            document.getElementById('selectedTag').value = ''; // 清空选择的标签
+            document.getElementById('filterForm').submit(); // 提交表单以刷新设备列表
+        }
+
+        function openModal(modalId) {
+            var modal = document.getElementById(modalId);
+            modal.style.display = "block";
+        }
+
+        function openEditRegionModal(regionId, regionName) {
+            var modal = document.getElementById("editRegionModal");
+            document.getElementById("edit_region_id_hidden").value = regionId;
+            document.getElementById("edit_region_name").value = regionName;
+            modal.style.display = "block";
+        }
+
+        function openEditTagModal(tagId, tagName, tagDevices = []) {
+    var modal = document.getElementById("editTagModal");
+    document.getElementById("edit_tag_id").value = tagId;
+    document.getElementById("edit_tag_name").value = tagName;
+
+    if (typeof tagDevices === 'string') {
+        tagDevices = JSON.parse(tagDevices).map(Number);
+    }
+
+    var devicesElement = document.getElementById("edit_tag_devices");
+    var checkboxes = devicesElement.querySelectorAll("input[type='checkbox']");
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = tagDevices.includes(parseInt(checkbox.value));
+    });
+
+    modal.style.display = "block";
+
+    // 重新初始化全选按钮状态（可选）
+    var allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+    if (document.querySelector('#select-all-button')) {
+        document.querySelector('#select-all-button').textContent = allChecked ? '取消全选' : '全选';
+    }
+}
+
+        window.onclick = function(event) {
+            var modals = document.getElementsByClassName('modal');
+            Array.prototype.forEach.call(modals, function(modal) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        };
+
+        function filterTagDevices(tagId, tagName) {
+    var tagDeviceList = document.getElementById('tagDeviceList');
+    tagDeviceList.innerHTML = '';
+
+    fetch('/get_tag_devices/' + tagId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.devices) {
+                data.devices.forEach(device => {
+                    var listItem = document.createElement('li');
+                    listItem.className = 'list-item';
+
+                    var span = document.createElement('span');
+                    span.textContent = `${device.alias} (${device.ip_address})`;
+                    listItem.appendChild(span);
+
+                    var btnGroup = document.createElement('div');
+                    btnGroup.className = 'btn-group';
+
+                    var deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn';
+                    deleteBtn.textContent = '删除';
+                    deleteBtn.onclick = function() {
+                        if (confirm('确定要移除此设备吗？')) {
+                            fetch('/remove_device_from_tag', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ device_id: device.id, tag_id: tagId })
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    filterTagDevices(tagId, tagName);
+                                    alert('设备已成功从标签中移除。');
+                                } else {
+                                    alert('移除设备失败：' + result.error);
+                                }
+                            });
+                        }
+                    };
+                    btnGroup.appendChild(deleteBtn);
+
+                    listItem.appendChild(btnGroup);
+                    tagDeviceList.appendChild(listItem);
+                });
+                // 更新标签下的设备数量
+                document.getElementById('selectedTagDeviceCount').textContent = `共计：${data.device_count} 台设备`;
+            }
+        });
+
+    var sections = document.querySelectorAll(".content");
+    sections.forEach(section => {
+        section.style.display = (section.id === 'tag-devices') ? 'block' : 'none';
+    });
+
+    document.getElementById('selectedTagName').textContent = '标签相关门禁: ' + tagName;
+}
+
+        function openModal(modalId, userId = '', username = '') {
+            var modal = document.getElementById(modalId);
+            if (modalId === 'changePasswordModal') {
+                var form = document.getElementById('changePasswordForm');
+                form.querySelector('#change_user_id').value = userId;
+            }
+            modal.style.display = "block";
+        }
+
+    function openEditModal(deviceId, alias, ipAddress, regionId, deviceTags = [], deviceGroup = '', commKey = '', port = 4370) {
+    var modal = document.getElementById("editDeviceModal");
+    document.getElementById("edit_device_id").value = deviceId;
+    document.getElementById("edit_ip_address").value = ipAddress;
+    document.getElementById("edit_alias").value = alias;
+    document.getElementById("edit_region_id").value = regionId;
+    document.getElementById("edit_comm_key").value = commKey ? commKey : '';
+    document.getElementById("edit_port").value = port ? port : 4370;  // 确保传递端口值
+
+    var tagsElements = document.querySelectorAll("#editDeviceModal input[name='tags']");
+    tagsElements.forEach(function(element) {
+        element.checked = deviceTags.includes(parseInt(element.value));
+    });
+
+    document.getElementById("edit_group").value = deviceGroup ? deviceGroup : '';
+
+    modal.style.display = "block";
+}
+
+
+        function showSection(sectionId) {
+            var sections = document.querySelectorAll(".content");
+            sections.forEach(function (section) {
+                section.style.display = section.id === sectionId ? "block" : "none";
+            });
+
+            var buttons = document.querySelectorAll(".sidebar button");
+            buttons.forEach(function (button) {
+                button.classList.toggle("selected", button.getAttribute("onclick").includes(sectionId));
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var section = new URLSearchParams(window.location.search).get('section');
+            if (section) {
+                showSection(section);
+            } else {
+                showSection('devices');
+            }
+        });
+
+        function openAddDevicesToTagModal() {
+            var modal = document.getElementById("addDevicesToTagModal");
+            modal.style.display = "block";
+        }
+
+        document.getElementById("devices").classList.add("show");
+
+        function openEditUserModal(userId, username, nickname, role, allowedTags, allowedGroups) {
+            var modal = document.getElementById("editUserModal");
+            document.getElementById("edit_user_id").value = userId;
+            document.getElementById("edit_username").value = username;
+            document.getElementById("edit_nickname").value = nickname;
+            document.getElementById("edit_role").value = role;
+
+            var allowedTagsArray = allowedTags ? allowedTags.split(',') : [];
+            var tagsElements = document.querySelectorAll("#editUserModal input[name='tags']");
+            tagsElements.forEach(function(element) {
+                element.checked = allowedTagsArray.includes(element.value);
+            });
+
+            document.getElementById("edit_groups").value = allowedGroups;
+            modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            var modal = document.getElementById(modalId);
+            modal.style.display = "none";
+        }
+
+        document.getElementById('deviceFilter').addEventListener('input', function() {
+            var filterText = this.value.toLowerCase();
+            var devices = document.querySelectorAll('#edit_tag_devices div');
+
+            devices.forEach(function(device) {
+                var deviceName = device.getAttribute('data-device-name').toLowerCase();
+                if (deviceName.includes(filterText)) {
+                    device.style.display = 'block';
+                } else {
+                    device.style.display = 'none';
+                }
+            });
+        });
+
+        function toggleSelectAll(containerId) {
+    var container = document.getElementById(containerId);
+    var checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    var allChecked = Array.from(checkboxes).every(checkbox => !checkbox.closest('div').style.display || checkbox.checked);
+
+    checkboxes.forEach(function(checkbox) {
+        if (!checkbox.closest('div').style.display || checkbox.closest('div').style.display !== 'none') {
+            checkbox.checked = !allChecked;
+        }
+    });
+}
+    </script>
+</body>
+</html>
+
+

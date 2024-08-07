@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IT-门禁管理系统 - 手机端</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 9px; /* 全局字体大小 */
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem; /* 减少头部的间距 */
+            text-align: center;
+            position: relative;
+            font-size: 12px; /* 标题字体大小 */
+        }
+
+        .header-title {
+            margin: 0;
+            padding: 0.5rem; /* 给标题少量的内边距 */
+            font-size: 12px; /* 标题字体大小 */
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between; /* 在两端对齐 */
+            align-items: center; /* 垂直居中 */
+            width: 100%;
+        }
+
+        .user-links {
+            display: flex;
+        }
+
+        .filter-form {
+            display: flex;
+            justify-content: flex-end; /* 右对齐 */
+            align-items: center;
+        }
+
+        .filter-form input {
+            padding: 0.2rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            margin-right: 0.5rem;
+            font-size: 9px; /* 输入框字体大小 */
+        }
+
+        .filter-form input:focus {
+            outline: none;
+            border-color: #0056b3;
+        }
+
+        .filter-form button {
+            padding: 0.2rem 0.5rem; /* 减少按钮内间距 */
+            border: none;
+            border-radius: 4px;
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+            font-size: 9px; /* 按钮字体大小 */
+        }
+
+        .filter-form button:hover {
+            background-color: #003f7f;
+        }
+
+        .user-links a {
+            padding: 0.3rem 0.5rem; /* 减少链接内间距 */
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 9px; /* 链接字体大小 */
+            text-decoration: none;
+            margin-right: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .user-links a:hover {
+            background-color: #218838;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 0.5rem; /* 减少容器内间距 */
+            overflow: hidden;
+        }
+
+        .sidebar {
+            flex: 0 0 20%; /* 将宽度调整为20% */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 0.5rem;
+            overflow-y: auto;
+            font-size: 9px; /* 区域列表字体大小 */
+        }
+
+        .sidebar h3 {
+            color: #007bff;
+            margin: 0;
+            padding: 0.5rem; /* 减少标题上下间距 */
+            border-bottom: 1px solid #ddd;
+            font-size: 10px; /* 区域列表标题字体大小 */
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 9px; /* 区域列表按钮字体大小 */
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+
+        .sidebar button.selected {
+            background-color: #0056b3;
+        }
+
+        .main-content {
+            flex: 1; /* 使它占据剩余空间 */
+            background-color: #fff;
+            padding: 0.5rem; /* 减少主内容区间距 */
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-size: 9px; /* 列表字体大小 */
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 0.5rem; /* 减少列表项间距 */
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem; /* 减少内部项间距 */
+            font-size: 9px; /* 列表项字体大小 */
+        }
+
+        .device-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem; /* 减少内部按钮间距 */
+        }
+
+        .device-actions form {
+            display: flex;
+            flex-direction: row; /* 事由框和按钮在同一行 */
+            gap: 0.3rem; /* 减少输入框和按钮之间的间距 */
+        }
+
+        .device-actions input[type="text"] {
+            padding: 0.2rem; /* 减少输入框内间距 */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            font-size: 9px; /* 输入框字体大小 */
+        }
+
+        .device-actions input[type="text"]:focus {
+            outline: none;
+            border-color: #0056b3;
+        }
+
+        .device-actions button {
+            padding: 0.2rem 0.5rem; /* 减少按钮内间距 */
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 9px; /* 按钮字体大小 */
+            transition: background-color 0.3s;
+        }
+
+        .device-actions button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 0.5rem; /* 减少底部内间距 */
+            background-color: #f1f1f1;
+            font-size: 9px; /* 底部字体大小 */
+        }
+
+        /* 模态窗口样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.3rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .submit-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .flash-messages li {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .flash-messages .success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .flash-messages .error {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">IT-门禁管理系统 - 手机端</h1>
+        <div class="header-content">
+            <div class="user-links">
+                <a href="{{ url_for('manage_devices') }}">后台管理</a>
+                <a class="username-link" id="usernameLink">{{ current_user.nickname }}</a>
+                <a href="{{ url_for('logout') }}">退出登录</a>
+            </div>
+            <div class="filter-form">
+                <form action="{{ url_for('index') }}" method="GET">
+                    {{ form.hidden_tag() }} <!-- CSRF 令牌 -->
+                    <input type="text" name="filter" placeholder="搜索门禁..." value="{{ filter_text }}">
+                    <button type="submit">搜索</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <h3>区域列表</h3>
+            <button class="selected" onclick="showSection('devices'); filterDevicesByRegion('');">全部区域</button>
+            {% for region in regions %}
+                <button onclick="showSection('devices'); filterDevicesByRegion('{{ region.id }}');" {% if region.id == selected_region_id %}class="selected"{% endif %}>{{ region.name }}</button>
+            {% endfor %}
+        </div>
+        <div class="main-content">
+            <ul id="deviceList">
+                <div class="messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flash-messages">
+                            {% for category, message in messages %}
+                                <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
+                {% for device in devices %}
+                    <li>
+                        <div>{{ device.alias }} ({{ device.ip_address }})</div>
+                        <div class="device-actions">
+                            <form action="{{ url_for('open_door', device_id=device.id) }}" method="POST">
+                                {{ form.hidden_tag() }} <!-- CSRF 令牌 -->
+                                <input type="text" name="code" placeholder="请填写开门事由" maxlength="1000" required>
+                                <input type="hidden" name="region_id" value="{{ selected_region_id }}">
+                                <input type="hidden" name="filter" value="{{ filter_text }}">
+                                <button type="submit">远程开门</button>
+                            </form>
+                            {% if 'result_' + device.ip_address in results %}
+                                <span>{{ results['result_' + device.ip_address] }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <footer>
+        Copyright &copy; By 2024 IT-门禁管理系统. All rights reserved.
+    </footer>
+
+    <!-- 模态窗口 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>修改密码</h2>
+<form id="changePasswordForm" action="{{ url_for('change_password') }}" method="POST">
+     {{ form.hidden_tag() }} <!-- CSRF 令牌 -->
+    <div class="form-group">
+        <label for="old_password">旧密码：</label>
+        <input type="password" id="old_password" name="old_password" required>
+    </div>
+    <div class="form-group">
+        <label for="new_password">新密码：</label>
+        <input type="password" id="new_password" name="new_password" required>
+    </div>
+    <button type="submit" class="submit-btn">修改密码</button>
+    <div class="messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flash-messages">
+                            {% for category, message in messages %}
+                                <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+</form>
+
+<script>
+    // 获取模态窗口和相关元素
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("usernameLink");
+    var span = document.getElementsByClassName("close")[0];
+
+    // 当用户点击用户名时，打开模态窗口
+    btn.onclick = function() {
+        modal.style.display = "flex";
+    }
+
+    // 当用户点击 (x) 时，关闭模态窗口
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // 当用户点击模态窗口外部时，关闭模态窗口
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 根据 URL 参数显示模态窗口（回显错误信息）
+    window.onload = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('modal') === 'myModal') {
+            modal.style.display = "flex";
+        }
+    }
+
+    // 过滤设备列表
+    function filterDevicesByRegion(regionId) {
+        // 清除所有按钮的选中状态
+        var buttons = document.querySelectorAll('.sidebar button');
+        buttons.forEach(function(button) {
+            button.classList.remove('selected');
+        });
+
+        var currentFilter = document.querySelector('.filter-form input[name="filter"]').value; // 获取当前过滤参数
+
+        if (regionId) {
+            window.location.href = "{{ url_for('index') }}?region=" + encodeURIComponent(regionId) + "&filter=" + encodeURIComponent(currentFilter);
+            document.querySelector('.sidebar button[onclick="filterDevicesByRegion(\'' + regionId + '\')"]').classList.add('selected');
+        } else {
+            // 按全部区域进行搜索
+            window.location.href = "{{ url_for('index') }}?filter=" + encodeURIComponent(currentFilter);
+        }
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // 切换显示不同的内容区域
+    function showSection(sectionId) {
+        var sections = document.querySelectorAll(".content");
+        sections.forEach(function(section) {
+            section.style.display = section.id === sectionId ? "block" : "none";
+        });
+
+        var buttons = document.querySelectorAll(".sidebar button");
+        buttons.forEach(function(button) {
+            button.classList.toggle("selected", button.getAttribute("onclick").includes(sectionId));
+        });
+    }
+</script>
+</body>
+</html>
